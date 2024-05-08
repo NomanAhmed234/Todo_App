@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:todo_app/api_model.dart';
+import 'package:todo_app/color.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -13,11 +14,16 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   TextEditingController name = TextEditingController();
+
   String? nameS;
+  bool onClick1 = false;
+  bool onClick2 = true;
+  bool onClick3 = true;
+  bool text = true;
 
   Future<List<ApiModel>> getApi() async {
     var url = Uri.parse(
-        "https://crudcrud.com/api/65d019e259e0440999805e8bcafd5015/unicorns");
+        "https://crudcrud.com/api/35a4610f1f844a0baddaa4e8199471ba/unicorns");
     var response = await http.get(url);
 
     if (response.statusCode == 200) {
@@ -35,55 +41,167 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: CustomColor.blue,
       appBar: AppBar(
-        title: Text("Home Screen"),
+        foregroundColor: Colors.white,
+        backgroundColor: CustomColor.blue,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            IconButton(onPressed: () {}, icon: Icon(Icons.menu)),
+            Text("Set Daily Task"),
+            IconButton(onPressed: () {}, icon: Icon(Icons.notifications))
+          ],
+        ),
+        centerTitle: true,
       ),
       body: FutureBuilder(
           future: getApi(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
-                child: CircularProgressIndicator(),
+                child: CircularProgressIndicator(
+                  color: CustomColor.pink,
+                ),
               );
             } else if (snapshot.hasError) {
               print("Error:${snapshot.error}");
               return Text("Error:${snapshot.error}");
             } else if (snapshot.hasData) {
               return Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(4.0),
                 child: Column(
                   children: [
-                    TextField(
-                      controller: name,
-                      decoration: InputDecoration(
-                        hintText: 'Enter text',
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 15.0, horizontal: 20.0),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blue),
-                          borderRadius: BorderRadius.circular(30.0),
+                    Container(
+                      height: 40,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  onClick1 = !onClick1;
+                                  onClick2 = true;
+                                  onClick3 = true;
+                                });
+                              },
+                              child: Card(
+                                color:
+                                    onClick1 ? Colors.white : CustomColor.pink,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Center(
+                                      child: Text(
+                                    "Recent",
+                                    style: TextStyle(
+                                      color: onClick1
+                                          ? CustomColor.blue
+                                          : Colors.white,
+                                    ),
+                                  )),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  onClick2 = !onClick2;
+                                  onClick1 = true;
+                                  onClick3 = true;
+                                });
+                              },
+                              child: Card(
+                                color:
+                                    onClick2 ? Colors.white : CustomColor.pink,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Center(
+                                      child: Text(
+                                    "Sort",
+                                    style: TextStyle(
+                                      color: onClick2
+                                          ? CustomColor.blue
+                                          : Colors.white,
+                                    ),
+                                  )),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  onClick3 = !onClick3;
+                                  onClick1 = true;
+                                  onClick2 = true;
+                                });
+                              },
+                              child: Card(
+                                color:
+                                    onClick3 ? Colors.white : CustomColor.pink,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Center(
+                                      child: Text(
+                                    "Normal",
+                                    style: TextStyle(
+                                      color: onClick3
+                                          ? CustomColor.blue
+                                          : Colors.white,
+                                    ),
+                                  )),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextField(
+                        style: TextStyle(color: Colors.white),
+                        controller: name,
+                        decoration: InputDecoration(
+                          filled: true,
+                          fillColor: CustomColor.blue,
+                          hintText: "Add task",
+                          hintStyle: TextStyle(color: CustomColor.lightblue),
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 15.0, horizontal: 20.0),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: CustomColor.lightblue),
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
                         ),
                       ),
                     ),
                     Expanded(
-                      child: ListView.builder(
-                          itemCount: snapshot.data!.length,
-                          itemBuilder: (context, int index) {
-                            return ListTile(
-                              title:
-                                  Text(snapshot.data![index].name.toString()),
-                              subtitle: Row(
-                                children: [
-                                  Text(snapshot.data![index].sId.toString()),
-                                  Text(snapshot.data![index].age.toString()),
-                                ],
+                        child: ListView.builder(
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, int index) {
+                        return Padding(
+                          padding:
+                              const EdgeInsets.only(top: 3, right: 5, left: 5),
+                          child: Card(
+                            child: ListTile(
+                              title: Text(
+                                snapshot.data![index].name.toString(),
+                                style: TextStyle(
+                                    color: CustomColor.blue,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20),
                               ),
                               trailing: Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -94,9 +212,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                         context: context,
                                         builder: (BuildContext context) {
                                           return AlertDialog(
-                                            title: Text('Delete Task'),
+                                            backgroundColor: CustomColor.blue,
+                                            title: Text(
+                                              'Delete Task',
+                                              style: TextStyle(
+                                                  color: Colors.white),
+                                            ),
                                             content: Text(
-                                                'Do you want to delete Your task.'),
+                                              'Do you want to delete Your task.',
+                                              style: TextStyle(
+                                                  color: Colors.white),
+                                            ),
                                             actions: [
                                               TextButton(
                                                 onPressed: () {
@@ -107,20 +233,33 @@ class _HomeScreenState extends State<HomeScreen> {
                                                     Navigator.of(context).pop();
                                                   });
                                                 },
-                                                child: Text('Delete'),
+                                                child: Text(
+                                                  'Delete',
+                                                  style: TextStyle(
+                                                      color: CustomColor
+                                                          .lightblue),
+                                                ),
                                               ),
                                               TextButton(
                                                 onPressed: () {
                                                   Navigator.of(context).pop();
                                                 },
-                                                child: Text('No'),
+                                                child: Text(
+                                                  'No',
+                                                  style: TextStyle(
+                                                      color: CustomColor
+                                                          .lightblue),
+                                                ),
                                               ),
                                             ],
                                           );
                                         },
                                       );
                                     },
-                                    icon: Icon(Icons.delete),
+                                    icon: Icon(
+                                      Icons.delete,
+                                      color: CustomColor.blue,
+                                    ),
                                   ),
                                   IconButton(
                                     onPressed: () {
@@ -138,41 +277,51 @@ class _HomeScreenState extends State<HomeScreen> {
                                             newData);
                                       });
                                     },
-                                    icon: Icon(Icons.new_label),
+                                    icon: Icon(
+                                      Icons.edit,
+                                      color: CustomColor.blue,
+                                    ),
                                   ),
                                 ],
                               ),
-                            );
-                          }),
-                    ),
+                            ),
+                          ),
+                        );
+                      },
+                    )),
                   ],
                 ),
               );
             } else
               return Text("No Data");
           }),
-      floatingActionButton: ElevatedButton(
-          onPressed: () {
-            setState(() {
-              nameS = name.text;
-              name.clear();
-              Map<String, dynamic> data = {
-                'name': nameS,
-                'age': 30,
-                'email': 'john@example.com'
-              };
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: CustomColor.pink,
+        onPressed: () {
+          setState(() {
+            nameS = name.text;
+            name.clear();
+            Map<String, dynamic> data = {
+              'name': nameS,
+              'age': 30,
+              'email': 'john@example.com'
+            };
 
-              postData(data);
-            });
-          },
-          child: Icon(Icons.add)),
+            postData(data);
+          });
+        },
+        child: Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
+      ),
     );
   }
 }
 
 Future<void> deleteItem(String id) async {
   var url = Uri.parse(
-      "https://crudcrud.com/api/65d019e259e0440999805e8bcafd5015/unicorns/$id");
+      "https://crudcrud.com/api/35a4610f1f844a0baddaa4e8199471ba/unicorns/$id");
 
   try {
     var response = await http.delete(
@@ -194,7 +343,7 @@ Future<void> deleteItem(String id) async {
 
 Future<void> postData(Map<String, dynamic> data) async {
   var url = Uri.parse(
-      "https://crudcrud.com/api/65d019e259e0440999805e8bcafd5015/unicorns");
+      "https://crudcrud.com/api/35a4610f1f844a0baddaa4e8199471ba/unicorns");
 
   try {
     var response = await http.post(
@@ -225,7 +374,7 @@ Future<void> postData(Map<String, dynamic> data) async {
 
 Future<void> updateItem(String id, Map<String, dynamic> newData) async {
   var url = Uri.parse(
-      "https://crudcrud.com/api/65d019e259e0440999805e8bcafd5015/unicorns$id");
+      "https://crudcrud.com/api/35a4610f1f844a0baddaa4e8199471ba/unicorns$id");
 
   try {
     var response = await http.put(
